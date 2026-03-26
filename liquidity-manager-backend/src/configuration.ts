@@ -44,6 +44,11 @@ export const configSchema = z.object({
         apiKey: z.string(),
         apiSecret: z.string(),
     }),
+    peerswap: z
+        .object({
+            restUrl: z.string(),
+        })
+        .optional(),
     elements: z.object({
         rpcUrl: z.string(),
         rpcUsername: z.string(),

@@ -168,6 +168,68 @@ services:
     links:
       - bitcoind
       - elements
+  peerswap-lsp:
+    build: ./peerswap
+    image: 40swap-peerswap:latest
+    container_name: 40swap_peerswap_lsp
+    restart: always
+    depends_on:
+      - lnd-lsp
+    volumes:
+      - lnd-lsp-data:/root/.lnd:ro
+      - peerswap-lsp-data:/root/.peerswap
+    expose:
+      - "42069"
+      - "42070"
+    ports:
+      - "42069:42069"
+      - "42070:42070"
+    command: >-
+      --datadir=/root/.peerswap
+      --lnd.host=lnd-lsp:10009
+      --lnd.tlscertpath=/root/.lnd/tls.cert
+      --lnd.macaroonpath=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon
+      --host=0.0.0.0:42069
+      --resthost=0.0.0.0:42070
+      --bitcoinswaps
+  peerswap-user:
+    image: 40swap-peerswap:latest
+    container_name: 40swap_peerswap_user
+    restart: always
+    depends_on:
+      - lnd-user
+    volumes:
+      - lnd-user-data:/root/.lnd:ro
+      - peerswap-user-data:/root/.peerswap
+    expose:
+      - "42069"
+    command: >-
+      --datadir=/root/.peerswap
+      --lnd.host=lnd-user:10009
+      --lnd.tlscertpath=/root/.lnd/tls.cert
+      --lnd.macaroonpath=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon
+      --host=0.0.0.0:42069
+      --resthost=0.0.0.0:42070
+      --bitcoinswaps
+  peerswap-alice:
+    image: 40swap-peerswap:latest
+    container_name: 40swap_peerswap_alice
+    restart: always
+    depends_on:
+      - lnd-alice
+    volumes:
+      - lnd-alice-data:/root/.lnd:ro
+      - peerswap-alice-data:/root/.peerswap
+    expose:
+      - "42069"
+    command: >-
+      --datadir=/root/.peerswap
+      --lnd.host=lnd-alice:10009
+      --lnd.tlscertpath=/root/.lnd/tls.cert
+      --lnd.macaroonpath=/root/.lnd/data/chain/bitcoin/regtest/admin.macaroon
+      --host=0.0.0.0:42069
+      --resthost=0.0.0.0:42070
+      --bitcoinswaps
   rtl-user:
     profiles: ["rtl"]
     container_name: 40swap_rtl_user
@@ -411,6 +473,9 @@ volumes:
   lnd-lsp-data:
   lnd-user-data:
   lnd-alice-data:
+  peerswap-lsp-data:
+  peerswap-user-data:
+  peerswap-alice-data:
   nbxplorer-data:
   cloudbeaver-data:
   rtl-user-data:

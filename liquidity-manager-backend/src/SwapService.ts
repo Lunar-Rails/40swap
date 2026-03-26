@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ChannelsService } from './ChannelsService.js';
@@ -10,8 +10,10 @@ import { LndService } from '@40swap/crypto-clients';
 import { LiquidService } from './LiquidService.js';
 import { BitfinexClient } from './BitfinexClient.js';
 import { DummySwap } from './DummySwap.js';
+import { PeerswapClient } from './PeerswapClient.js';
+import { PeerswapLiquiditySwap } from './PeerswapLiquiditySwap.js';
 
-export const STRATEGIES = ['bitfinex', 'dummy'] as const;
+export const STRATEGIES = ['bitfinex', 'dummy', 'peerswap'] as const;
 type Strategy = (typeof STRATEGIES)[number];
 
 export interface SwapRequest {
@@ -40,6 +42,7 @@ export class SwapService {
         private readonly bitfinex: BitfinexClient,
         @InjectRepository(LiquiditySwap)
         private readonly swapRepository: Repository<LiquiditySwap>,
+        @Optional() @Inject(PeerswapClient) private readonly peerswap: PeerswapClient | null,
     ) {}
 
     getAvailableStrategies(): ReadonlyArray<Strategy> {
@@ -99,6 +102,12 @@ export class SwapService {
                 break;
             case 'dummy':
                 runner = new DummySwap(swapId, this.swapRepository);
+                break;
+            case 'peerswap':
+                if (!this.peerswap) {
+                    throw new Error('Peerswap is not configured');
+                }
+                runner = new PeerswapLiquiditySwap(swapId, this.peerswap, this.swapRepository);
                 break;
             default:
                 strategy satisfies never;

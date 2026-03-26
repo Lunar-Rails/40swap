@@ -20,6 +20,7 @@ import { AuthGuard } from './AuthGuard.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { BitfinexClient } from './BitfinexClient.js';
+import { PeerswapClient } from './PeerswapClient.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -71,6 +72,14 @@ const __dirname = path.dirname(__filename);
             useFactory: (configService: ConfigService<LiquidityManagerConfiguration>) => {
                 const config = configService.getOrThrow('bitfinex', { infer: true });
                 return new BitfinexClient(config);
+            },
+        },
+        {
+            provide: PeerswapClient,
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService<LiquidityManagerConfiguration>) => {
+                const config = configService.get('peerswap', { infer: true });
+                return config ? new PeerswapClient(config.restUrl) : null;
             },
         },
     ],

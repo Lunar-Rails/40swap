@@ -85,7 +85,11 @@ export const SwapModal: Component<SwapModalProps> = (props) => {
                             <For each={strategies()}>
                                 {(strat) => (
                                     <option value={strat} selected={strat === strategy()}>
-                                        {strat === 'dummy' ? 'Dummy (Test - No funds moved)' : strat.charAt(0).toUpperCase() + strat.slice(1)}
+                                        {strat === 'dummy'
+                                            ? 'Dummy (Test - No funds moved)'
+                                            : strat === 'peerswap'
+                                              ? 'Peerswap (Direct Peer Swap)'
+                                              : strat.charAt(0).toUpperCase() + strat.slice(1)}
                                     </option>
                                 )}
                             </For>

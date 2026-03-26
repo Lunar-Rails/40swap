@@ -25,6 +25,9 @@ bitfinex:
   apiKey: YOUR_API_KEY
   apiSecret: YOUR_API_SECRET
 
+peerswap:
+  restUrl: http://localhost:42070
+
 elements:
   rpcUrl: http://localhost:18884
   rpcUsername: elements
