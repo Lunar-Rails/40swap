@@ -109,7 +109,7 @@ export class AuthController {
     @Get('logout')
     @ApiOperation({ summary: 'Logout and end session' })
     @ApiResponse({ status: 302, description: 'Redirect to Keycloak logout' })
-    logout(@Session() session: SessionData, @Req() req: Request, @Res() res: Response): void {
+    async logout(@Session() session: SessionData, @Req() req: Request, @Res() res: Response): Promise<void> {
         const idToken = session.idToken;
 
         req.session.destroy((err) => {
@@ -119,7 +119,7 @@ export class AuthController {
         });
 
         if (idToken) {
-            const logoutUrl = this.oidcService.getEndSessionUrl(idToken);
+            const logoutUrl = await this.oidcService.getEndSessionUrl(idToken);
             this.logger.log(`Redirecting to Keycloak logout: ${logoutUrl}`);
             res.redirect(logoutUrl);
         } else {
