@@ -43,7 +43,8 @@ export class OidcService {
             this.logger.log(`Issuer: ${this.issuer.issuer}`);
         } catch (error) {
             this.initPromise = null;
-            this.logger.error('Failed to initialize OIDC client', error);
+            const msg = error instanceof AggregateError ? error.errors.map((e) => e.toString()).join(', ') : (error as Error).toString();
+            this.logger.error(`Failed to initialize OIDC client: ${msg}`, error);
             throw error;
         }
     }
