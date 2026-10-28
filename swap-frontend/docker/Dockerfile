@@ -1,4 +1,4 @@
-FROM node:22.9 AS base
+FROM node:22.23.4 AS base
 
 FROM base AS source
 
