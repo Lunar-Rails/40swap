@@ -17,7 +17,7 @@ FROM peaceiris/mdbook:v0.4.40 AS docs
 COPY docs /book
 RUN mdbook build
 
-FROM nginx:1.27.2 AS prod
+FROM nginx:1.30.6 AS prod
 
 COPY swap-frontend/docker/nginx.conf.template /etc/nginx/templates/40swap.conf.template
 COPY --from=docs /book/book /usr/share/nginx/html/docs
